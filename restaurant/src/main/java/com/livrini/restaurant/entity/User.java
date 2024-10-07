@@ -27,6 +27,10 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name="role_id"))
     private List<Role> roles;
 
+    @OneToMany(mappedBy = "user")
+    private List<Payment> payments;
 
+    @OneToMany(mappedBy = "user")
+    private List<Commande> commandes;
 
 }
