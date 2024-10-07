@@ -3,8 +3,7 @@ package com.livrini.restaurant.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-import java.util.List;
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
@@ -12,20 +11,17 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Commande {
+@Table(name = "menu")
+public class Menu implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date date;
-    private String status;
+    private String name;
+    private String description;
+    private String price;
+    private String image;
 
-    @OneToMany(mappedBy = "commande")
-    private List<Payment> payments;
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-    @OneToMany(mappedBy = "commande")
-    private List<Avis> avis;
+
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
