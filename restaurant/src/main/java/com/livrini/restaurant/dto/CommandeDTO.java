@@ -9,4 +9,5 @@ public class CommandeDTO {
     private String description;
     private String stripeToken;
     private Long userId;
+    private Long restaurantId;
 }
