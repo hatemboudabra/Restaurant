@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommandeSer {
-    public String createOrderAndCharge(CommandeDTO commandeDTO);
-  //  public List<Commande> getallcommandes();
-   // public Optional<Commande> getcommande(Long id);
-    //public Commande updatecommande(Commande commande);
-  //  public void deletecommande(Long id);
+    public CommandeDTO addCommande(CommandeDTO commandeDTO);
+    public List<Commande> getallcommandes();
+    public Optional<Commande> getcommande(Long id);
+   public Commande updatecommande(Long id , CommandeDTO commandeDTO);
+    public void deletecommande(Long id);
 
 }

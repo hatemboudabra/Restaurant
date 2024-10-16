@@ -2,74 +2,56 @@ package com.livrini.restaurant.service;
 
 import com.livrini.restaurant.dto.CommandeDTO;
 import com.livrini.restaurant.entity.Commande;
-import com.livrini.restaurant.entity.Payment;
+
 import com.livrini.restaurant.entity.Restaurant;
 import com.livrini.restaurant.entity.User;
 import com.livrini.restaurant.repository.CommandeRepository;
 import com.livrini.restaurant.repository.RestaurantRepo;
 import com.livrini.restaurant.repository.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class CommandeService implements CommandeSer {
 
-    @Autowired
-    private PaymentService paymentService;
+    private final CommandeRepository commandeRepository;
+    private final UserRepo userRepo;
+    private final RestaurantRepo restaurantRepo;
 
-    @Autowired
-    private CommandeRepository commandeRepository;
-
-    @Autowired
-    private UserRepo userRepository;
-    @Autowired
-    private RestaurantRepo restaurantRepository;
-
-    @Override
-    public String createOrderAndCharge(CommandeDTO commandeDTO) {
-        User user = userRepository.findById(Math.toIntExact(commandeDTO.getUserId()))
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Restaurant restaurant = restaurantRepository.findById(commandeDTO.getRestaurantId()) // Fetch the restaurant
-                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
-
-        Commande commande = new Commande();
-        commande.setDate(new Date());
-        commande.setStatus("Pending");
-        commande.setUser(user);
-        commande.setRestaurant(restaurant);
-        commandeRepository.save(commande);
-
-        try {
-            Payment payment = new Payment();
-            payment.setAmount(commandeDTO.getTotalAmount());
-            payment.setDate(LocalDateTime.now());
-            payment.setUser(user);
-            payment.setCommande(commande);
-
-            paymentService.charge(commandeDTO.getTotalAmount(), commandeDTO.getCurrency(), commandeDTO.getDescription(), commandeDTO.getStripeToken());
-            payment.setStatus("Paid");
-
-            paymentService.savePayment(payment);
-
-            return "Order created and payment successful!";
-        } catch (Exception e) {
-            commande.setStatus("Payment Failed");
-            commandeRepository.save(commande);
-            return "Payment failed: " + e.getMessage();
-        }
+    public CommandeService(CommandeRepository commandeRepository, UserRepo userRepo, RestaurantRepo restaurantRepo) {
+        this.commandeRepository = commandeRepository;
+        this.userRepo = userRepo;
+        this.restaurantRepo = restaurantRepo;
     }
 
 
-/*
+    @Override
+    public CommandeDTO addCommande(CommandeDTO commandeDTO) {
+        Commande commande = new Commande();
+        commande.setDate(commandeDTO.getDate());
+        commande.setStatus(commandeDTO.getStatus());
+        User user = userRepo.findById(Math.toIntExact(commandeDTO.getUserId())).orElseThrow(() -> new RuntimeException("User not found"));
+        commande.setUser(user);
+        Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(commandeDTO.getRestaurantId());
+        if (!optionalRestaurant.isPresent()) {
+            throw new RuntimeException("Restaurant not found");
+        }
+        Restaurant restaurant = optionalRestaurant.get();
+        commande.setRestaurant(restaurant);
+        commandeRepository.save(commande);
+        return commandeDTO;
+    }
+
     @Override
     public List<Commande> getallcommandes() {
         return commandeRepository.findAll();
-
     }
 
     @Override
@@ -78,8 +60,34 @@ public class CommandeService implements CommandeSer {
     }
 
     @Override
+    public Commande updatecommande(Long id, CommandeDTO commandeDTO) {
+        Optional<Commande> optionalCommande = commandeRepository.findById(id);
+        if (optionalCommande.isPresent()) {
+            Commande commande = optionalCommande.get();
+            commande.setDate(commandeDTO.getDate());
+            commande.setStatus(commandeDTO.getStatus());
+            User user = userRepo.findById(Math.toIntExact(commandeDTO.getUserId())).orElse(null);
+            if (user != null) {
+                commande.setUser(user);
+            }
+            Restaurant restaurant = restaurantRepo.findById(commandeDTO.getRestaurantId()).orElse(null);
+            if (restaurant != null) {
+                commande.setRestaurant(restaurant);
+            }
+            commandeRepository.save(commande);
+            return commande;
+        } else {
+            throw new EntityNotFoundException("Commande with id " + id + " not found");
+        }
+    }
+
+
+    @Override
     public void deletecommande(Long id) {
                 commandeRepository.deleteById(id);
-    }*/
+    }
 }
+
+
+
 

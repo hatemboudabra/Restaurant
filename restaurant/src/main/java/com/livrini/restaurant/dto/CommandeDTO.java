@@ -2,12 +2,12 @@ package com.livrini.restaurant.dto;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class CommandeDTO {
-    private Double totalAmount;
-    private String currency;
-    private String description;
-    private String stripeToken;
+    private Date date;
+    private String status;
     private Long userId;
     private Long restaurantId;
 }
