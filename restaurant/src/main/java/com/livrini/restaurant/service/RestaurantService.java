@@ -5,6 +5,9 @@ import com.livrini.restaurant.entity.Restaurant;
 import com.livrini.restaurant.repository.RestaurantRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class RestaurantService implements RestaurantSer{
 
@@ -22,5 +25,15 @@ public class RestaurantService implements RestaurantSer{
         restaurant.setPhone(restaurantDTO.getPhone());
         restaurantRepo.save(restaurant);
         return restaurantDTO;
+    }
+
+    @Override
+    public Optional<Restaurant> getResBYId(Long id) {
+        return restaurantRepo.findById(id);
+    }
+
+    @Override
+    public List<Restaurant> getAll() {
+        return restaurantRepo.findAll();
     }
 }

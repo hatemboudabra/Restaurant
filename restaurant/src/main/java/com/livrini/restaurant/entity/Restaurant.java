@@ -1,5 +1,6 @@
 package com.livrini.restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +26,6 @@ public class Restaurant implements Serializable {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menus;
     @OneToMany(mappedBy = "restaurant")
+    @JsonIgnore
     private List<Avis> avis;
 }
