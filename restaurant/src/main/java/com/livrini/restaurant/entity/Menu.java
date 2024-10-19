@@ -19,6 +19,7 @@ public class Menu implements Serializable {
     private String name;
     private String description;
     private String price;
+    @Column(name = "image")
     private String image;
 
 
