@@ -41,7 +41,7 @@ public class MenuServiceImpl implements MenuService{
     }
 
     @Override
-    public Menu updayeMenu(Long id, MenuDto menuDto) {
+    public Menu updateMenu(Long id, MenuDto menuDto) {
             Optional<Menu> optionalMenu= menuRepo.findById(id);
             if (optionalMenu.isPresent()) {
                 Menu menu = optionalMenu.get();

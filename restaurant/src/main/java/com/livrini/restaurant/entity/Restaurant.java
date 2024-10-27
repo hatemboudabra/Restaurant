@@ -21,8 +21,8 @@ public class Restaurant implements Serializable {
     private String name;
     private String address;
     private String phone;
-    @OneToMany(mappedBy = "restaurant")
-    private List<Commande>commandes;
+   // @OneToMany(mappedBy = "restaurant")
+   // private List<Commande>commandes;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menus;
     @OneToMany(mappedBy = "restaurant")

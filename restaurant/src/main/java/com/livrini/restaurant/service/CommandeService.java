@@ -3,9 +3,11 @@ package com.livrini.restaurant.service;
 import com.livrini.restaurant.dto.CommandeDTO;
 import com.livrini.restaurant.entity.Commande;
 
+import com.livrini.restaurant.entity.Menu;
 import com.livrini.restaurant.entity.Restaurant;
 import com.livrini.restaurant.entity.User;
 import com.livrini.restaurant.repository.CommandeRepository;
+import com.livrini.restaurant.repository.MenuRepo;
 import com.livrini.restaurant.repository.RestaurantRepo;
 import com.livrini.restaurant.repository.UserRepo;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,12 +25,12 @@ public class CommandeService implements CommandeSer {
 
     private final CommandeRepository commandeRepository;
     private final UserRepo userRepo;
-    private final RestaurantRepo restaurantRepo;
+    private final MenuRepo menuRepo;
 
-    public CommandeService(CommandeRepository commandeRepository, UserRepo userRepo, RestaurantRepo restaurantRepo) {
+    public CommandeService(CommandeRepository commandeRepository, UserRepo userRepo, MenuRepo menuRepo) {
         this.commandeRepository = commandeRepository;
         this.userRepo = userRepo;
-        this.restaurantRepo = restaurantRepo;
+        this.menuRepo = menuRepo;
     }
 
 
@@ -37,14 +39,14 @@ public class CommandeService implements CommandeSer {
         Commande commande = new Commande();
         commande.setDate(commandeDTO.getDate());
         commande.setStatus(commandeDTO.getStatus());
-        User user = userRepo.findById(Math.toIntExact(commandeDTO.getUserId())).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepo.findById(Math.toIntExact(commandeDTO.getUserId())).get();
         commande.setUser(user);
-        Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(commandeDTO.getRestaurantId());
-        if (!optionalRestaurant.isPresent()) {
-            throw new RuntimeException("Restaurant not found");
+        Optional<Menu> optionalMenu = menuRepo.findById(commandeDTO.getMenuId());
+        if (!optionalMenu.isPresent()) {
+            throw new RuntimeException("Menu not found");
         }
-        Restaurant restaurant = optionalRestaurant.get();
-        commande.setRestaurant(restaurant);
+        Menu menu = optionalMenu.get();
+        commande.setMenu(menu);
         commandeRepository.save(commande);
         return commandeDTO;
     }
@@ -70,9 +72,9 @@ public class CommandeService implements CommandeSer {
             if (user != null) {
                 commande.setUser(user);
             }
-            Restaurant restaurant = restaurantRepo.findById(commandeDTO.getRestaurantId()).orElse(null);
-            if (restaurant != null) {
-                commande.setRestaurant(restaurant);
+            Menu menu = menuRepo.findById(commandeDTO.getMenuId()).orElse(null);
+            if (menu != null) {
+                commande.setMenu(menu);
             }
             commandeRepository.save(commande);
             return commande;

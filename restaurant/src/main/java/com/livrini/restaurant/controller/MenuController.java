@@ -97,7 +97,7 @@ public class MenuController {
         }
 
         menuDto.setImage(nouveauNom);
-        return menuService.updayeMenu(id,menuDto);
+        return menuService.updateMenu(id,menuDto);
     }
     @DeleteMapping("/delete/menu/{id}")
     public String deleteMenu(@PathVariable Long id) {

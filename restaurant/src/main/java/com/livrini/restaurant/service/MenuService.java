@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface MenuService {
     MenuDto addMenu(MenuDto menuDto);
-    Menu updayeMenu(Long id,MenuDto menuDto);
+    Menu updateMenu(Long id,MenuDto menuDto);
     List<Menu>findallMenu();
     Optional<Menu> findById(Long id);
     void DeleteMenu(Long id);

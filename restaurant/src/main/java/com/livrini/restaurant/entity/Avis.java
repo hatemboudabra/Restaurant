@@ -1,5 +1,6 @@
 package com.livrini.restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,8 +23,10 @@ public class Avis implements Serializable {
     private Date date;
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
+    @JsonIgnore
     private Restaurant restaurant;
     @ManyToOne
     @JoinColumn(name = "commande_id", nullable = false)
+    @JsonIgnore
     private Commande commande;
 }

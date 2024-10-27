@@ -9,5 +9,5 @@ public class CommandeDTO {
     private Date date;
     private String status;
     private Long userId;
-    private Long restaurantId;
+    private Long menuId;
 }

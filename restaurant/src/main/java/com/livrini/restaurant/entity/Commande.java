@@ -1,5 +1,6 @@
 package com.livrini.restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,10 +24,21 @@ public class Commande {
     private List<Payment> payments;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
     @OneToMany(mappedBy = "commande")
     private List<Avis> avis;
+    //@ManyToOne
+   // @JoinColumn(name = "restaurant_id", nullable = false)
+    //private Restaurant restaurant;
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurant;
+    @JoinColumn(name = "menu_id", nullable = false)
+    @JsonIgnore
+    private Menu menu;
+    public Long getMenuId() {
+        return menu != null ? menu.getId() : null;
+    }
+    public Long getUserId() {
+        return user != null ? user.getId() : null;
+    }
 }
