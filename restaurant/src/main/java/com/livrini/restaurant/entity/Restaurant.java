@@ -28,4 +28,5 @@ public class Restaurant implements Serializable {
     @OneToMany(mappedBy = "restaurant")
     @JsonIgnore
     private List<Avis> avis;
+
 }
