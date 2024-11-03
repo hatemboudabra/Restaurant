@@ -74,4 +74,5 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(role);
         return user;
     }
+
 }
