@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -52,5 +53,16 @@ public class ReservationController {
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+    @GetMapping("/reservation/{id}")
+    public ResponseEntity<Reservation> getReservation(@PathVariable Long id) {
+        Optional<Reservation> reservation = reservationService.findById(id);
+        return reservation.map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    @GetMapping("/allR")
+    public ResponseEntity<List<Reservation>> getAllreservationss() {
+        List<Reservation> reservations = reservationService.getallreservations();
+        return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 }

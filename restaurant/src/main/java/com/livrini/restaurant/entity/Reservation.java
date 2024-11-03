@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -25,8 +25,7 @@ public class Reservation implements Serializable {
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
-
-    private LocalDateTime reservationDate; // Date et heure de la réservation
+    private Date reservationDate;
 
     private int numberOfGuests; // Nombre d'invités
 }
