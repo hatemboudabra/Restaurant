@@ -1,9 +1,13 @@
 package com.livrini.restaurant.controller;
 
+import com.livrini.restaurant.dto.CommandeDTO;
 import com.livrini.restaurant.dto.ReservationDTO;
+import com.livrini.restaurant.entity.Commande;
 import com.livrini.restaurant.entity.Reservation;
 import com.livrini.restaurant.service.ReservationService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,5 +36,21 @@ public class ReservationController {
     public ResponseEntity<List<Reservation>> getReservationsByRestaurant(@PathVariable Long restaurantId) {
         List<Reservation> reservations = reservationService.getReservationsByRestaurant(restaurantId);
         return ResponseEntity.ok(reservations);
+    }
+
+    @DeleteMapping("/deletRc/{id}")
+    public ResponseEntity<Void> annuleReservation(@PathVariable Long id) {
+        reservationService.annuleReservation(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/updateR/{id}")
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody ReservationDTO reservationDTO) {
+        try {
+            Reservation reservations = reservationService.updateReseration(id, reservationDTO);
+            return new ResponseEntity<>(reservations, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
