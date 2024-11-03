@@ -9,6 +9,8 @@ import com.livrini.restaurant.service.MenuServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +38,25 @@ public class MenuController {
             System.out.println("Erreur " + e.getMessage());
         }
         return menus;
+    }
+    @GetMapping("/images/{filename}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String filename) {
+        try {
+            String repertoireImage = "restaurant/src/main/resources/images"; // Chemin vers le répertoire des images
+            File imageFile = new File(repertoireImage, filename);
+
+            if (imageFile.exists()) {
+                byte[] imageBytes = FileUtils.readFileToByteArray(imageFile);
+                return ResponseEntity.ok()
+                        .header("Content-Type", "image/jpeg") // Assurez-vous que le type de contenu correspond au type de votre image
+                        .body(imageBytes);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @RequestMapping(value = "/ajout/menu", method = RequestMethod.POST, headers = "accept=Application/json")
