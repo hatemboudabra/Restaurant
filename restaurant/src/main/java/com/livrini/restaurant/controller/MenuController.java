@@ -107,23 +107,37 @@ public class MenuController {
             }
         }
 
-        String nomFichier = file.getOriginalFilename();
-        String nouveauNom = FilenameUtils.getBaseName(nomFichier) + "." + FilenameUtils.getExtension(nomFichier);
-        File fichierDuServeur = new File(repertoire, nouveauNom);
+        String nouveauNom = null;
 
-        try {
-            FileUtils.writeByteArrayToFile(fichierDuServeur, file.getBytes());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save the file: " + e.getMessage());
+        if (!file.isEmpty()) {
+            // Save the new image
+            String nomFichier = file.getOriginalFilename();
+            nouveauNom = FilenameUtils.getBaseName(nomFichier) + "." + FilenameUtils.getExtension(nomFichier);
+            File fichierDuServeur = new File(repertoire, nouveauNom);
+
+            try {
+                FileUtils.writeByteArrayToFile(fichierDuServeur, file.getBytes());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to save the file: " + e.getMessage());
+            }
+        } else {
+            // Retrieve the existing image filename from the database
+            Optional<Menu> existingMenu = menuService.findById(id);
+            if (existingMenu.isPresent()) {
+                nouveauNom = existingMenu.get().getImage(); // Retrieve the image filename from the existing Menu
+            } else {
+                throw new RuntimeException("Menu not found");
+            }
         }
 
+        // Set the image name in the DTO
         menuDto.setImage(nouveauNom);
-        return menuService.updateMenu(id,menuDto);
+        return menuService.updateMenu(id, menuDto);
     }
     @DeleteMapping("/delete/menu/{id}")
-    public String deleteMenu(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
         menuService.DeleteMenu(id);
-        return "Menu with ID " + id + " deleted successfully.";
+        return ResponseEntity.ok().build(); // Returns 200 OK with no content
     }
 }
 
