@@ -1,4 +1,4 @@
-package com.livrini.restaurant.service.impl;
+package com.livrini.restaurant.service;
 
 import com.livrini.restaurant.dto.ReservationDTO;
 import com.livrini.restaurant.entity.Reservation;

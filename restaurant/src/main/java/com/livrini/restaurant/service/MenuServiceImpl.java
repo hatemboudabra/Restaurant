@@ -42,26 +42,24 @@ public class MenuServiceImpl implements MenuService{
 
     @Override
     public Menu updateMenu(Long id, MenuDto menuDto) {
-            Optional<Menu> optionalMenu= menuRepo.findById(id);
-            if (optionalMenu.isPresent()) {
-                Menu menu = optionalMenu.get();
-                menu.setName(menu.getName());
-                menu.setDescription(menuDto.getDescription());
-                menu.setPrice(menuDto.getPrice());
-                menu.setImage(menuDto.getImage());
-                Restaurant restaurant = restaurantRepo.findById(menuDto.getRestaurantId()).orElse(null);
-                if (restaurant != null) {
-                    menu.setRestaurant(restaurant);
-                }
-                menuRepo.save(menu);
-                return menu;
+        Optional<Menu> optionalMenu = menuRepo.findById(id);
+        if (optionalMenu.isPresent()) {
+            Menu menu = optionalMenu.get();
+            menu.setName(menuDto.getName()); // Utilisez menuDto pour mettre à jour les détails
+            menu.setDescription(menuDto.getDescription());
+            menu.setPrice(menuDto.getPrice());
+            menu.setImage(menuDto.getImage());
+            Restaurant restaurant = restaurantRepo.findById(menuDto.getRestaurantId()).orElse(null);
+            if (restaurant != null) {
+                menu.setRestaurant(restaurant);
             }
-            else {
-                    throw new EntityNotFoundException ("Menu with id \" + id + \" not found\"");
-                }
-
-
+            menuRepo.save(menu);
+            return menu;
+        } else {
+            throw new EntityNotFoundException("Menu with id " + id + " not found"); // Correction ici
+        }
     }
+
 
     @Override
     public List<Menu> findallMenu() {

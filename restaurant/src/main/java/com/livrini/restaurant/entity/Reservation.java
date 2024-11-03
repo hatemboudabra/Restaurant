@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -26,7 +27,7 @@ public class Reservation implements Serializable {
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
-    private LocalDateTime reservationDate; // Date et heure de la réservation
+    private Date reservationDate; // Date et heure de la réservation
 
     private int numberOfGuests; // Nombre d'invités
 }

@@ -3,11 +3,12 @@ package com.livrini.restaurant.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 public class ReservationDTO {
-    private Integer userId; // ID de l'utilisateur
-    private Long restaurantId; // ID du restaurant
-    private LocalDateTime reservationDate; // Date et heure de la réservation
-    private int numberOfGuests; // Nombre d'invités
+    private Integer userId;
+    private Long restaurantId;
+    private Date reservationDate;
+    private int numberOfGuests;
 }
