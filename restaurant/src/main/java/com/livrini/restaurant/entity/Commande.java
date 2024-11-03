@@ -18,7 +18,9 @@ public class Commande {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Date date;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Status status;
 
     @OneToMany(mappedBy = "commande")
     private List<Payment> payments;

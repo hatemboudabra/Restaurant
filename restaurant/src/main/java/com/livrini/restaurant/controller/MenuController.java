@@ -9,6 +9,8 @@ import com.livrini.restaurant.service.MenuServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +38,25 @@ public class MenuController {
             System.out.println("Erreur " + e.getMessage());
         }
         return menus;
+    }
+    @GetMapping("/images/{filename}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String filename) {
+        try {
+            String repertoireImage = "restaurant/src/main/resources/images"; // Chemin vers le répertoire des images
+            File imageFile = new File(repertoireImage, filename);
+
+            if (imageFile.exists()) {
+                byte[] imageBytes = FileUtils.readFileToByteArray(imageFile);
+                return ResponseEntity.ok()
+                        .header("Content-Type", "image/jpeg") // Assurez-vous que le type de contenu correspond au type de votre image
+                        .body(imageBytes);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @RequestMapping(value = "/ajout/menu", method = RequestMethod.POST, headers = "accept=Application/json")
@@ -86,23 +107,37 @@ public class MenuController {
             }
         }
 
-        String nomFichier = file.getOriginalFilename();
-        String nouveauNom = FilenameUtils.getBaseName(nomFichier) + "." + FilenameUtils.getExtension(nomFichier);
-        File fichierDuServeur = new File(repertoire, nouveauNom);
+        String nouveauNom = null;
 
-        try {
-            FileUtils.writeByteArrayToFile(fichierDuServeur, file.getBytes());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save the file: " + e.getMessage());
+        if (!file.isEmpty()) {
+            // Save the new image
+            String nomFichier = file.getOriginalFilename();
+            nouveauNom = FilenameUtils.getBaseName(nomFichier) + "." + FilenameUtils.getExtension(nomFichier);
+            File fichierDuServeur = new File(repertoire, nouveauNom);
+
+            try {
+                FileUtils.writeByteArrayToFile(fichierDuServeur, file.getBytes());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to save the file: " + e.getMessage());
+            }
+        } else {
+            // Retrieve the existing image filename from the database
+            Optional<Menu> existingMenu = menuService.findById(id);
+            if (existingMenu.isPresent()) {
+                nouveauNom = existingMenu.get().getImage(); // Retrieve the image filename from the existing Menu
+            } else {
+                throw new RuntimeException("Menu not found");
+            }
         }
 
+        // Set the image name in the DTO
         menuDto.setImage(nouveauNom);
-        return menuService.updateMenu(id,menuDto);
+        return menuService.updateMenu(id, menuDto);
     }
     @DeleteMapping("/delete/menu/{id}")
-    public String deleteMenu(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
         menuService.DeleteMenu(id);
-        return "Menu with ID " + id + " deleted successfully.";
+        return ResponseEntity.ok().build(); // Returns 200 OK with no content
     }
 }
 
