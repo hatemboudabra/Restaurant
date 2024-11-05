@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+   environment {
+           MAVEN_HOME = '/usr/share/maven' 
+           SONAR_HOST_URL = 'http://localhost:9000'
+           SONAR_PROJECT_KEY = 'livrini'
+       }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/hatemboudabra/Restaurant.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        sh "${MAVEN_HOME}/bin/mvn clean install"
+                    }
+                }
+            }
+        }
+
+        stage('Run SonarQube Analysis') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        sh "${MAVEN_HOME}/bin/mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
+                    }
+                }
+            }
+        }
+
+        stage('Publish Code Coverage') {
+            steps {
+                dir('restaurant') {
+                    script {
+
+                        sh "${MAVEN_HOME}/bin/mvn jacoco:report"
+                    }
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'restaurant/target/site/jacoco/*.html', allowEmptyArchive: true
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+    }
+}
