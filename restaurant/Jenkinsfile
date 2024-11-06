@@ -4,8 +4,8 @@ pipeline {
    environment {
            MAVEN_HOME = '/usr/share/maven'
            SONAR_HOST_URL = 'http://localhost:9000'
-           SONAR_PROJECT_KEY = 'ssh'
-
+           SONAR_PROJECT_KEY = 'retaurant'
+           SONAR_TOKEN = credentials('SonarQubeToken')
        }
 
     stages {
