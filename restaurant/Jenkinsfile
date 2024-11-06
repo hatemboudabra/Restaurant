@@ -1,12 +1,11 @@
 pipeline {
     agent any
 
-   environment {
-           MAVEN_HOME = '/usr/share/maven'
-           SONAR_HOST_URL = 'http://localhost:9000'
-           SONAR_PROJECT_KEY = 'retaurant'
-           SONAR_TOKEN = credentials('SonarQubeToken')
-       }
+    environment {
+        MAVEN_HOME = '/usr/share/maven'
+        SONAR_HOST_URL = 'http://localhost:9000'
+        SONAR_PROJECT_KEY = 'retaurant'
+    }
 
     stages {
         stage('Checkout') {
@@ -25,11 +24,34 @@ pipeline {
             }
         }
 
-        stage('Run SonarQube Analysis') {
+        stage('Test') {
             steps {
                 dir('restaurant') {
                     script {
-                        sh "${MAVEN_HOME}/bin/mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
+                        sh "${MAVEN_HOME}/bin/mvn test"
+                    }
+                }
+            }
+            post {
+                always {
+                    junit 'restaurant/target/surefire-reports/*.xml' // Publish test results
+                }
+                success {
+                    echo 'All unit tests passed!'
+                }
+                failure {
+                    echo 'Some unit tests failed.'
+                }
+            }
+        }
+
+        stage('Run SonarQube Analysis') {
+            steps {
+                dir('restaurant') {
+                    withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) {
+                        script {
+                            sh "${MAVEN_HOME}/bin/mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
+                        }
                     }
                 }
             }
@@ -39,7 +61,6 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-
                         sh "${MAVEN_HOME}/bin/mvn jacoco:report"
                     }
                 }
