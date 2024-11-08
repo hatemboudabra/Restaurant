@@ -34,7 +34,7 @@ pipeline {
             }
             post {
                 always {
-                    junit 'restaurant/target/surefire-reports/*.xml' // Publish test results
+                    junit 'restaurant/target/surefire-reports/*.xml'
                 }
                 success {
                     echo 'All unit tests passed!'
