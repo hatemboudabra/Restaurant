@@ -23,10 +23,10 @@ public class Avis implements Serializable {
     private Date date;
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @JsonIgnore
+   // @JsonIgnore
     private Restaurant restaurant;
     @ManyToOne
     @JoinColumn(name = "commande_id", nullable = false)
-    @JsonIgnore
+   // @JsonIgnore
     private Commande commande;
 }
