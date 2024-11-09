@@ -4,7 +4,7 @@ pipeline {
     environment {
         MAVEN_HOME = '/usr/share/maven'
         SONAR_HOST_URL = 'http://localhost:9000'
-        SONAR_PROJECT_KEY = 'retaurant'
+        SONAR_PROJECT_KEY = 'project_livrini'
     }
 
     stages {
