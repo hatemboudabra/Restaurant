@@ -26,7 +26,9 @@ public class Menu implements Serializable {
      @OneToMany(mappedBy = "menu")
      @JsonIgnore
      private List<Commande> commandes;
-
+    @OneToMany(mappedBy = "menu")
+    @JsonIgnore
+    private List<Avis> avis;
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     @JsonIgnore

@@ -14,7 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "avis")
-public class Avis implements Serializable {
+public class Avis  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,10 +23,26 @@ public class Avis implements Serializable {
     private Date date;
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
-   // @JsonIgnore
+   @JsonIgnore
     private Restaurant restaurant;
     @ManyToOne
     @JoinColumn(name = "commande_id", nullable = false)
-   // @JsonIgnore
+   @JsonIgnore
     private Commande commande;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    @JsonIgnore
+    private Menu menu;
+    public Long getRestaurantId() {
+        return restaurant != null ? restaurant.getId() : null;
+    }
+
+    public Long getCommandeId() {
+        return commande != null ? commande.getId() : null;
+    }
+
+    public Long getMenuId() {
+        return menu != null ? menu.getId() : null;
+    }
 }

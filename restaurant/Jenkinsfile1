@@ -5,6 +5,8 @@ pipeline {
         MAVEN_HOME = '/usr/share/maven'
         SONAR_HOST_URL = 'http://localhost:9000'
         SONAR_PROJECT_KEY = 'retaurant'
+        NEXUS_URL = 'http://localhost:8081/repository/maven-releases/'
+        NEXUS_REPOSITORY = 'deploymentRepo'
     }
 
     stages {
@@ -44,16 +46,7 @@ pipeline {
                 }
             }
         }
-        stage('Upload to Nexus') {
-                    steps {
-                        dir('restaurant') {
-                            script {
-                                sh "${MAVEN_HOME}/bin/mvn deploy"
-                            }
-                        }
-                    }
-                
-        }
+
         stage('Run SonarQube Analysis') {
             steps {
                 dir('restaurant') {
@@ -77,6 +70,25 @@ pipeline {
             post {
                 success {
                     archiveArtifacts artifacts: 'restaurant/target/site/jacoco/*.html', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Upload to Nexus') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        sh """
+                            ${MAVEN_HOME}/bin/mvn deploy:deploy-file \
+                            -DrepositoryId=${NEXUS_REPOSITORY} \
+                            -Durl=${NEXUS_URL} \
+                            -Dfile=target/your-artifact.jar \
+                            -DgroupId=com.example \
+                            -DartifactId=restaurant \
+                            -Dversion=1.0.0 \
+                            -Dpackaging=jar
+                        """
+                    }
                 }
             }
         }
