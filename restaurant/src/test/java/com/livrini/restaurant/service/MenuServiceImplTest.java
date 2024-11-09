@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,8 +40,9 @@ class MenuServiceImplTest {
         MockitoAnnotations.openMocks(this);
         restaurant = new Restaurant(1L, "Test Restaurant", "Test Address", "1234567890", null, null);
         menuDto = new MenuDto("Pizza", "Delicious pizza", "10.99", "pizza.jpg", 1L);
-        menu = new Menu(1L, "Pizza", "Delicious pizza", "10.99", "pizza.jpg", null, restaurant);
+        menu = new Menu(1L, "Pizza", "Delicious pizza", "10.99", "pizza.jpg", new ArrayList<>(), new ArrayList<>(), restaurant);
     }
+
 
     @Test
     void shouldAddMenu_WhenRestaurantExists() {

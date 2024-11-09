@@ -52,7 +52,7 @@ pipeline {
                             }
                         }
                     }
-                
+
         }
         stage('Run SonarQube Analysis') {
             steps {
