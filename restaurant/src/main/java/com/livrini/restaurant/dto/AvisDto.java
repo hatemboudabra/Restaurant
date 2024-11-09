@@ -1,12 +1,14 @@
 package com.livrini.restaurant.dto;
 
+import lombok.Data;
+
 import java.util.Date;
-
-public record AvisDto(Long id,
-                      String rating,
-                      String comment,
-                      Date date,
-                      Long restaurantId,
-                      Long commandeId) {
+@Data
+public class AvisDto {
+    private String rating;
+    private String comment;
+    private Date date;
+    private Long commandId;
+    private Long menuId;
+    private Long restaurantId;
 }
-

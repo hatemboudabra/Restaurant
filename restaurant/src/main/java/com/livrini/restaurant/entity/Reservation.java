@@ -13,7 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "reservations")
-public class Reservation implements Serializable {
+public class Reservation  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
