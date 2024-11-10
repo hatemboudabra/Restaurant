@@ -2,6 +2,7 @@ package com.livrini.restaurant.controller;
 
 import com.livrini.restaurant.dto.CommandeDTO;
 import com.livrini.restaurant.entity.Commande;
+import com.livrini.restaurant.entity.Reservation;
 import com.livrini.restaurant.service.CommandeService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,11 @@ public class CommandeController {
     public ResponseEntity<CommandeDTO> addCommande(@RequestBody CommandeDTO commandeDTO) {
         CommandeDTO savedCommande = commandeService.addCommande(commandeDTO);
         return new ResponseEntity<>(savedCommande, HttpStatus.CREATED);
+    }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Commande>> getCommandeByUser(@PathVariable Long userId) {
+        List<Commande> commandes = commandeService.getCommandeByUser(userId);
+        return ResponseEntity.ok(commandes);
     }
     @GetMapping("/allc")
     public ResponseEntity<List<Commande>> getAllCommandes() {
