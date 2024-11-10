@@ -59,6 +59,11 @@ public class CommandeService implements CommandeSer {
     }
 
     @Override
+    public List<Commande> getCommandeByUser(Long userId) {
+        return commandeRepository.findByUser_Id(userId);
+    }
+
+    @Override
     public Commande updatecommande(Long id, CommandeDTO commandeDTO) {
         Optional<Commande> optionalCommande = commandeRepository.findById(id);
         if (optionalCommande.isPresent()) {

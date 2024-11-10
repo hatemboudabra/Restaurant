@@ -20,7 +20,7 @@ public class Menu implements Serializable {
     private Long id;
     private String name;
     private String description;
-    private String price;
+    private float price;
     @Column(name = "image")
     private String image;
      @OneToMany(mappedBy = "menu")

@@ -43,4 +43,13 @@ public class Commande {
     public Long getUserId() {
         return user != null ? user.getId() : null;
     }
+    public String getMenuName() {
+        return menu != null ? menu.getName() : null;
+    }
+    public String getUserName() {
+        return user != null ? user.getUsername() : null;
+    }
+    public float getMenuPrice() {
+        return menu != null ? menu.getPrice() : null;
+    }
 }
