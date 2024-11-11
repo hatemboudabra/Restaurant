@@ -10,4 +10,5 @@ public class ReservationDTO {
     private Long restaurantId;
     private Date reservationDate;
     private int numberOfGuests;
+    private String status;
 }

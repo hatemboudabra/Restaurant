@@ -48,7 +48,7 @@ public class ReservationController {
     @PutMapping("/updateR/{id}")
     public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody ReservationDTO reservationDTO) {
         try {
-            Reservation reservations = reservationService.updateReseration(id, reservationDTO);
+            Reservation reservations = reservationService.updateReservation(id, reservationDTO);
             return new ResponseEntity<>(reservations, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -65,4 +65,11 @@ public class ReservationController {
         List<Reservation> reservations = reservationService.getallreservations();
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Reservation>> getReservationsByStatus(@PathVariable String status) {
+        List<Reservation> reservations = reservationService.getReservationsByStatus(status);
+        return ResponseEntity.ok(reservations);
+    }
+
 }
