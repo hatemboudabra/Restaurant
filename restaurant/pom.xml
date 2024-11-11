@@ -140,10 +140,15 @@
             <version>5.0.0</version>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>23.5.0</version> <!-- Check for the latest version -->
+		</dependency>
 
 
 
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>
