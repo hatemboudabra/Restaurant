@@ -3,7 +3,9 @@ package com.livrini.restaurant.controller;
 import com.livrini.restaurant.dto.AvisDto;
 import com.livrini.restaurant.entity.Avis;
 import com.livrini.restaurant.service.AvisService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/avis")
+@CrossOrigin(origins = "*")
+
 public class AvisController {
     private final AvisService avisService;
 
@@ -21,9 +25,13 @@ public class AvisController {
     }
 
     @PostMapping
-    public ResponseEntity<Avis> addAvis(@RequestBody AvisDto avisDto) {
-        Avis avis = avisService.addAvis(avisDto);
-        return ResponseEntity.ok(avis);
+    public ResponseEntity<Avis> addAvis( @RequestBody AvisDto avisDto) {
+        try {
+            Avis avis = avisService.addAvis(avisDto);
+            return ResponseEntity.ok(avis);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping

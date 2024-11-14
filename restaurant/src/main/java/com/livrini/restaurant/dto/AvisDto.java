@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 @Data
 public class AvisDto {
-    private String rating;
+    private Long rating;
     private String comment;
     private Date date;
     private Long commandId;
