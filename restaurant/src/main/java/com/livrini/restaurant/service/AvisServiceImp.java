@@ -24,12 +24,12 @@ public class AvisServiceImp implements AvisService{
     private final AvisRepo avisRepo;
     private final MenuRepo menuRepo;
     private final CommandeRepository commandeRepository;
-    private final RestaurantRepo restaurantRepo;
-    public AvisServiceImp(AvisRepo avisRepo, MenuRepo menuRepo, CommandeRepository commandeRepository, RestaurantRepo restaurantRepo) {
+
+    public AvisServiceImp(AvisRepo avisRepo, MenuRepo menuRepo, CommandeRepository commandeRepository) {
         this.avisRepo = avisRepo;
         this.menuRepo = menuRepo;
         this.commandeRepository = commandeRepository;
-        this.restaurantRepo = restaurantRepo;
+
     }
     private String rating;
     private String comment;
@@ -51,9 +51,7 @@ public class AvisServiceImp implements AvisService{
         Menu menu = menuRepo.findById(avisDto.getMenuId())
                 .orElseThrow(() -> new EntityNotFoundException("Menu with ID " + avisDto.getMenuId() + " not found"));
         avis.setMenu(menu);
-        Restaurant restaurant = restaurantRepo.findById(avisDto.getRestaurantId())
-                .orElseThrow(() -> new EntityNotFoundException("Restaurant with ID " + avisDto.getRestaurantId() + " not found"));
-        avis.setRestaurant(restaurant);
+
 
         return avisRepo.save(avis);
     }
@@ -90,11 +88,7 @@ public class AvisServiceImp implements AvisService{
             avis.setMenu(menu);
         }
 
-        if (avisDto.getRestaurantId() != null) {
-            Restaurant restaurant = restaurantRepo.findById(avisDto.getRestaurantId())
-                    .orElseThrow(() -> new EntityNotFoundException("Restaurant with ID " + avisDto.getRestaurantId() + " not found"));
-            avis.setRestaurant(restaurant);
-        }
+
 
         return avisRepo.save(avis);
     }
