@@ -10,5 +10,5 @@ public class AvisDto {
     private Date date;
     private Long commandId;
     private Long menuId;
-    private Long restaurantId;
+
 }

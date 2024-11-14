@@ -21,10 +21,7 @@ public class Avis  {
     private Long rating;
     private String comment;
     private Date date;
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
-   @JsonIgnore
-    private Restaurant restaurant;
+
     @ManyToOne
     @JoinColumn(name = "commande_id", nullable = false)
    @JsonIgnore
@@ -34,9 +31,7 @@ public class Avis  {
     @JoinColumn(name = "menu_id", nullable = false)
     @JsonIgnore
     private Menu menu;
-    public Long getRestaurantId() {
-        return restaurant != null ? restaurant.getId() : null;
-    }
+
 
     public Long getCommandeId() {
         return commande != null ? commande.getId() : null;
