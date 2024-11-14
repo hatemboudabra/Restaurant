@@ -18,7 +18,7 @@ public class Avis  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String rating;
+    private Long rating;
     private String comment;
     private Date date;
     @ManyToOne
