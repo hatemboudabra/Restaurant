@@ -98,4 +98,22 @@ public class AvisServiceImp implements AvisService{
     public void deleteAvis(Long id) {
         avisRepo.deleteById(id);
     }
+
+
+    @Override
+    public Double calculateAverageRatingByMenu(Long menuId) {
+        List<Avis> avisList = avisRepo.findAll();
+        double sum = 0;
+        int count = 0;
+
+        for (Avis avis : avisList) {
+            if (avis.getMenu().getId().equals(menuId)) {
+                sum += avis.getRating();
+                count++;
+            }
+        }
+
+        return count > 0 ? sum / count : null;
+    }
+
 }

@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -39,11 +41,14 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
-    @DeleteMapping("/deletRc/{id}")
-    public ResponseEntity<Void> annuleReservation(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteReservation(@PathVariable Long id) {
         reservationService.annuleReservation(id);
-        return ResponseEntity.noContent().build();
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Reservation with ID " + id + " has been deleted successfully.");
+        return ResponseEntity.ok(response);
     }
+
 
     @PutMapping("/updateR/{id}")
     public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody ReservationDTO reservationDTO) {
