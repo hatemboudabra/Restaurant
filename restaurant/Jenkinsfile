@@ -81,12 +81,12 @@ pipeline {
             }
         }
         stage('OWASP Dependency Check') {
-                    steps {
-                        dir('restaurant') {
-                            dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DC'
-                            dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                        }
-                    }
+            steps {
+                dir('restaurant') {
+                    dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DC'
+                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                }
+            }
         }
     }
     post {
