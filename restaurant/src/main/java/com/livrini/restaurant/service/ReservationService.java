@@ -2,7 +2,6 @@ package com.livrini.restaurant.service;
 
 import com.livrini.restaurant.dto.MenuDto;
 import com.livrini.restaurant.dto.ReservationDTO;
-import com.livrini.restaurant.entity.Commande;
 import com.livrini.restaurant.entity.Menu;
 import com.livrini.restaurant.entity.Reservation;
 import com.livrini.restaurant.entity.ReservationStatus;

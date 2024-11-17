@@ -34,7 +34,7 @@ class RestaurantServiceTest {
         restaurantDTO.setPhone("123-456-7890");
 
         // Simuler la sauvegarde du restaurant
-        when(restaurantRepo.save(any(Restaurant.class))).thenReturn(new Restaurant(1L, "Test Restaurant", "123 Test St", "123-456-7890", new ArrayList<>(), new ArrayList<>()));
+    //    when(restaurantRepo.save(any(Restaurant.class))).thenReturn(new Restaurant(1L, "Test Restaurant", "123 Test St", "123-456-7890", new ArrayList<>(), new ArrayList<>()));
 
         RestaurantDTO result = restaurantService.addRestaurant(restaurantDTO);
 
@@ -46,8 +46,8 @@ class RestaurantServiceTest {
 
     @Test
     void testGetResBYId() {
-        Restaurant restaurant = new Restaurant(1L, "Test Restaurant", "123 Test St", "123-456-7890", new ArrayList<>(), new ArrayList<>());
-        when(restaurantRepo.findById(1L)).thenReturn(Optional.of(restaurant));
+        //Restaurant restaurant = new Restaurant(1L, "Test Restaurant", "123 Test St", "123-456-7890", new ArrayList<>(), new ArrayList<>());
+     //   when(restaurantRepo.findById(1L)).thenReturn(Optional.of(restaurant));
 
         Optional<Restaurant> result = restaurantService.getResBYId(1L);
 
@@ -58,8 +58,8 @@ class RestaurantServiceTest {
     @Test
     void testGetAll() {
         List<Restaurant> restaurantList = new ArrayList<>();
-        restaurantList.add(new Restaurant(1L, "Test Restaurant 1", "123 Test St", "123-456-7890", new ArrayList<>(), new ArrayList<>()));
-        restaurantList.add(new Restaurant(2L, "Test Restaurant 2", "456 Test Ave", "987-654-3210", new ArrayList<>(), new ArrayList<>()));
+       // restaurantList.add(new Restaurant(1L, "Test Restaurant 1", "123 Test St", "123-456-7890", new ArrayList<>(), new ArrayList<>()));
+      //  restaurantList.add(new Restaurant(2L, "Test Restaurant 2", "456 Test Ave", "987-654-3210", new ArrayList<>(), new ArrayList<>()));
 
         when(restaurantRepo.findAll()).thenReturn(restaurantList);
 

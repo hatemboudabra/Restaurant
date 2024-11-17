@@ -14,4 +14,5 @@ public interface AvisService {
     public Optional<Avis> getAvis(Long id);
     public Avis updateAvis(Long id , AvisDto avisDto);
     public void deleteAvis(Long id);
+    Double calculateAverageRatingByMenu(Long menuId);
 }

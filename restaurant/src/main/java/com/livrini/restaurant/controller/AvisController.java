@@ -58,4 +58,11 @@ public class AvisController {
         avisService.deleteAvis(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    @GetMapping("/average-rating/{menuId}")
+    public Double getAverageRatingByMenu(@PathVariable Long menuId) {
+        return avisService.calculateAverageRatingByMenu(menuId);
+    }
+
 }

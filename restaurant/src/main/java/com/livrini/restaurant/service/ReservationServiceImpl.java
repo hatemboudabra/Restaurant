@@ -55,23 +55,19 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public Reservation updateReservation(Long id, ReservationDTO reservationDTO) {
-        // Retrieve the reservation by its ID
         Optional<Reservation> optionalReservation = reservationRepo.findById(id);
 
         if (optionalReservation.isPresent()) {
             Reservation reservation = optionalReservation.get();
-
-            // Update the reservation date and number of guests from the DTO
             reservation.setReservationDate(reservationDTO.getReservationDate());
             reservation.setNumberOfGuests(reservationDTO.getNumberOfGuests());
 
-            // Optionally update the status, if you are passing it in the DTO
             if (reservationDTO.getStatus() != null) {
                 reservation.setStatus(ReservationStatus.valueOf(reservationDTO.getStatus().toUpperCase()));
             }
 
-            // Set the user entity from the provided userId
             User user = userRepo.findById(reservationDTO.getUserId()).orElse(null);
             if (user != null) {
                 reservation.setUser(user);
@@ -79,7 +75,6 @@ public class ReservationServiceImpl implements ReservationService {
                 throw new EntityNotFoundException("User with id " + reservationDTO.getUserId() + " not found");
             }
 
-            // Set the restaurant entity from the provided restaurantId
             Restaurant restaurant = restaurantRepo.findById(reservationDTO.getRestaurantId()).orElse(null);
             if (restaurant != null) {
                 reservation.setRestaurant(restaurant);
@@ -87,22 +82,18 @@ public class ReservationServiceImpl implements ReservationService {
                 throw new EntityNotFoundException("Restaurant with id " + reservationDTO.getRestaurantId() + " not found");
             }
 
-            // Save the updated reservation back to the repository
             return reservationRepo.save(reservation);
 
         } else {
-            // Throw exception if the reservation is not found
             throw new EntityNotFoundException("Reservation with id " + id + " not found");
         }
     }
 
+
+
     @Override
     public void annuleReservation(Long id) {
-        Optional<Reservation> reservation = reservationRepo.findById(id);
-        reservation.ifPresent(res -> {
-            res.setStatus(ReservationStatus.CANCELED);
-            reservationRepo.save(res);
-        });
+        reservationRepo.findById(id).ifPresent(reservationRepo::delete);
     }
 
     @Override
