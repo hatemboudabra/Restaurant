@@ -44,16 +44,17 @@ pipeline {
                 }
             }
         }
-        stage('Upload to Nexus') {
-                    steps {
-                        dir('restaurant') {
-                            script {
-                                sh "${MAVEN_HOME}/bin/mvn deploy"
-                            }
-                        }
-                    }
 
+        stage('Upload to Nexus') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        sh "${MAVEN_HOME}/bin/mvn deploy"
+                    }
+                }
+            }
         }
+
         stage('Run SonarQube Analysis') {
             steps {
                 dir('restaurant') {
@@ -80,15 +81,19 @@ pipeline {
                 }
             }
         }
+
         stage('OWASP Dependency Check') {
             steps {
                 dir('restaurant') {
-                    dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'Dependency-Check'
-                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                    script {
+                        dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'Dependency-Check'
+                        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                    }
                 }
             }
         }
     }
+
     post {
         always {
             echo 'Pipeline completed.'
