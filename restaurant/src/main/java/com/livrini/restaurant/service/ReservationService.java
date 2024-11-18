@@ -18,4 +18,5 @@ public interface ReservationService {
     Optional<Reservation> findById(Long id);
     public List<Reservation> getallreservations();
     List<Reservation> getReservationsByStatus(String status);
+    public Reservation updateReservationStatus(Long id, String status);
 }
