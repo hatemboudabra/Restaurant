@@ -4,7 +4,7 @@ pipeline {
     environment {
         MAVEN_HOME = '/usr/share/maven'
         SONAR_HOST_URL = 'http://localhost:9000'
-        SONAR_PROJECT_KEY = 'project_livrini'
+        SONAR_PROJECT_KEY = 'restaurant_livrini'
     }
 
     stages {
@@ -83,7 +83,7 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 dir('restaurant') {
-                    dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DC'
+                    dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'Dependency-Check'
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
                 }
             }
