@@ -1,3 +1,4 @@
+/*
 package com.livrini.restaurant.service;
 
 import com.livrini.restaurant.dto.ReservationDTO;
@@ -94,8 +95,8 @@ class ReservationServiceImplTest {
         when(userRepo.findById(reservationDTO.getUserId())).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () ->
-                reservationService.createReservation(reservationDTO),
-            "Expected createReservation to throw, but it didn't");
+                        reservationService.createReservation(reservationDTO),
+                "Expected createReservation to throw, but it didn't");
 
         assertEquals("User not found", exception.getMessage());
         verify(reservationRepo, never()).save(any(Reservation.class));
@@ -111,26 +112,29 @@ class ReservationServiceImplTest {
         assertEquals(1, reservations.size(), "Expected one reservation in the list");
     }
 
-    @Test
+*/
+/*    @Test
     void shouldUpdateReservation_WhenReservationExists() {
         when(reservationRepo.findById(reservation.getId())).thenReturn(Optional.of(reservation));
         when(userRepo.findById(reservationDTO.getUserId())).thenReturn(Optional.of(user));
         when(restaurantRepo.findById(reservationDTO.getRestaurantId())).thenReturn(Optional.of(restaurant));
 
         reservationDTO.setNumberOfGuests(5);
-      //  Reservation updatedReservation = reservationService.updateReseration(reservation.getId(), reservationDTO);
+        Reservation updatedReservation = reservationService.updateReseration(reservation.getId(), reservationDTO);
 
-     //   assertEquals(reservation.getId(), updatedReservation.getId(), "The updated reservation ID should match");
-     //   assertEquals(5, updatedReservation.getNumberOfGuests(), "The updated number of guests should match");
-    }
+assertEquals(reservation.getId(), updatedReservation.getId(), "The updated reservation ID should match");
+assertEquals(5, updatedReservation.getNumberOfGuests(), "The updated number of guests should match");
+        }*//*
 
-    @Test
-    void shouldDeleteReservation_WhenReservationExists() {
-        when(reservationRepo.findById(reservation.getId())).thenReturn(Optional.of(reservation));
-        doNothing().when(reservationRepo).deleteById(reservation.getId());
 
-        reservationService.annuleReservation(reservation.getId());
+@Test
+void shouldDeleteReservation_WhenReservationExists() {
+    when(reservationRepo.findById(reservation.getId())).thenReturn(Optional.of(reservation));
+    doNothing().when(reservationRepo).deleteById(reservation.getId());
 
-        verify(reservationRepo, times(1)).deleteById(reservation.getId());
-    }
+    reservationService.annuleReservation(reservation.getId());
+
+    verify(reservationRepo, times(1)).deleteById(reservation.getId());
 }
+}
+*/

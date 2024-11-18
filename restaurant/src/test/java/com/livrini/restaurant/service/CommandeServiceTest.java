@@ -43,6 +43,7 @@ class CommandeServiceTest {
 
     @Test
     void shouldAddCommande_WhenUserAndMenuExist() {
+        // Initialisation des objets User et Menu simulés
         User mockUser = new User();
         mockUser.setId(1L);
         Menu mockMenu = new Menu();
@@ -72,6 +73,7 @@ class CommandeServiceTest {
         assertEquals(commandeDTO.getMenuId(), result.getMenuId());
         assertEquals(commandeDTO.getStatus(), result.getStatus());
     }
+
 
 
 
