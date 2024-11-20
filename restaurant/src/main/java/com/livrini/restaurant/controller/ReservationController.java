@@ -76,5 +76,18 @@ public class ReservationController {
         List<Reservation> reservations = reservationService.getReservationsByStatus(status);
         return ResponseEntity.ok(reservations);
     }
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Reservation> updateReservationStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
 
+        try {
+            Reservation updatedReservation = reservationService.updateReservationStatus(id, status);
+            return ResponseEntity.ok(updatedReservation);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }

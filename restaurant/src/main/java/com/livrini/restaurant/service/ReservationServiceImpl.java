@@ -110,4 +110,23 @@ public class ReservationServiceImpl implements ReservationService {
         ReservationStatus reservationStatus = ReservationStatus.valueOf(status.toUpperCase());  // Convertit le statut en Enum
         return reservationRepo.findByStatus(reservationStatus);
     }
+
+
+    @Override
+    @Transactional
+    public Reservation updateReservationStatus(Long id, String status) {
+        Reservation reservation = reservationRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation with id " + id + " not found"));
+        if (status != null) {
+            try {
+                reservation.setStatus(ReservationStatus.valueOf(status.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid status value: " + status);
+            }
+        }
+        return reservationRepo.save(reservation);
+    }
+
+
+
 }
