@@ -18,13 +18,13 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: postgres:15
     environment:
-      POSTGRES_USER: username
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
       POSTGRES_DB: restaurant
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
