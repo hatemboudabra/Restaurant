@@ -58,4 +58,8 @@ public class CommandeController {
         commandeService.deletecommande(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @GetMapping("/top-5-users")
+    public List<Object[]> getTop5UsersWithMostOrders() {
+        return commandeService.getTop5UsersWithMostOrders();
+    }
 }

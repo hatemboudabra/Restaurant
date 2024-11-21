@@ -90,8 +90,10 @@ public class CommandeService implements CommandeSer {
     public void deletecommande(Long id) {
                 commandeRepository.deleteById(id);
     }
+
+
+    @Override
+    public List<Object[]> getTop5UsersWithMostOrders() {
+        return commandeRepository.findTop5UsersWithMostOrders();
+    }
 }
-
-
-
-
