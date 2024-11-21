@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    environment {
+        MAVEN_HOME = '/usr/share/maven'
+        DOCKER_HUB_REPO = 'hatemboudabra/restaurant_backend'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+
+                git branch: 'main', url: 'https://github.com/hatemboudabra/Restaurant.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('restaurant') { // Change directory to 'restaurant'
+                    script {
+                        sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                dir('restaurant') {
+                    withCredentials([usernamePassword(credentialsId: 'dockerHubToken', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        script {
+                            sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
+                            sh "docker push ${DOCKER_HUB_REPO}:latest"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        sh 'docker compose down'
+                        sh 'docker compose up -d'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs for details.'
+        }
+    }
+}
