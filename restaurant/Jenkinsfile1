@@ -28,11 +28,12 @@ pipeline {
                 dir('restaurant') {
                     script {
                         // Scan the image for vulnerabilities without using Java DB
-                        sh "trivy image --scanners vuln --timeout 600s ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'"
+                        sh "trivy image --scanners vuln --timeout 600s --no-progress ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'"
                     }
                 }
             }
         }
+
 
 
 
