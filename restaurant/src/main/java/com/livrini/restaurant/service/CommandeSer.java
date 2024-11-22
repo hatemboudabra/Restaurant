@@ -3,6 +3,7 @@ package com.livrini.restaurant.service;
 import com.livrini.restaurant.dto.CommandeDTO;
 import com.livrini.restaurant.entity.Commande;
 import com.livrini.restaurant.entity.Reservation;
+import com.livrini.restaurant.entity.Status;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,11 @@ public interface CommandeSer {
     public Optional<Commande> getcommande(Long id);
     List<Commande> getCommandeByUser(Long userId);
    public Commande updatecommande(Long id , CommandeDTO commandeDTO);
+
+
+
+    Commande updateStatusById(Long id, Status status);
+
     public void deletecommande(Long id);
     public List<Object[]> getTop5UsersWithMostOrders();
 

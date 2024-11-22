@@ -30,8 +30,8 @@ public class PaymentController {
 
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl("http://localhost:4200/success")  // URL de redirection après paiement réussi
-                    .setCancelUrl("http://localhost:4200/cancel")    // URL en cas d'annulation
+                    .setSuccessUrl("http://localhost:4200/success")
+                    .setCancelUrl("http://localhost:4200/cancel")
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
                                     .setPriceData(
