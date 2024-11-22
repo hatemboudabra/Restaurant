@@ -20,5 +20,6 @@ public interface CommandeSer {
     Commande updateStatusById(Long id, Status status);
 
     public void deletecommande(Long id);
+    public List<Object[]> getTop5UsersWithMostOrders();
 
 }

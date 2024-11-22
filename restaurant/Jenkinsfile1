@@ -1,0 +1,90 @@
+pipeline {
+    agent any
+
+    environment {
+        MAVEN_HOME = '/usr/share/maven'
+        DOCKER_HUB_REPO = 'hatemboudabra/restaurant_backend'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/hatemboudabra/Restaurant.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
+                    }
+                }
+            }
+        }
+
+       stage('Trivy Image Scan') {
+           steps {
+               dir('restaurant') {
+                   script {
+                       // Use Docker to run Trivy for scanning the image
+                       sh """
+                       docker run --rm \
+                       -v /var/run/docker.sock:/var/run/docker.sock \
+                       -v ${WORKSPACE}/trivy-cache:/root/.cache/ \
+                       aquasec/trivy:0.57.1 image \
+                       --scanners vuln,config \
+                       --timeout 600s \
+                       --no-progress \
+                       ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
+                       """
+                   }
+               }
+           }
+       }
+
+
+
+
+
+
+
+
+
+        stage('Push Docker Image') {
+            steps {
+                dir('restaurant') {
+                    withCredentials([usernamePassword(credentialsId: 'dockerHubToken', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        script {
+                            sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
+                            sh "docker push ${DOCKER_HUB_REPO}:latest"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        sh 'docker compose down'
+                        sh 'docker compose up -d'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs for details.'
+        }
+    }
+}
