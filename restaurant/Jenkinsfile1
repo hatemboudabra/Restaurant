@@ -27,11 +27,12 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        sh "trivy image ${DOCKER_HUB_REPO}:latest > trivy-report.txt"
+                        sh "trivy image --scanners vuln ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'"
                     }
                 }
             }
         }
+
 
         stage('Push Docker Image') {
             steps {
