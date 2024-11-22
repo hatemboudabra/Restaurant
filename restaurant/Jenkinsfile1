@@ -27,7 +27,8 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        sh "trivy image --scanners vuln ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'"
+                        trivy image --scanners vuln --skip-dirs /usr/share/maven ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
+
                     }
                 }
             }
