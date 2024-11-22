@@ -27,13 +27,12 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        trivy image --scanners vuln --skip-dirs /usr/share/maven ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
-
+                        // Skip unnecessary directories during scan
+                        sh "trivy image --scanners vuln --skip-dirs /usr/share/maven ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'"
                     }
                 }
             }
         }
-
 
         stage('Push Docker Image') {
             steps {
@@ -52,8 +51,9 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        sh 'docker compose down'
-                        sh 'docker compose up -d'
+                        // Use docker-compose commands, depending on your version
+                        sh 'docker-compose down'
+                        sh 'docker-compose up -d'
                     }
                 }
             }
