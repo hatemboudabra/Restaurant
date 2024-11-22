@@ -27,14 +27,22 @@ pipeline {
            steps {
                dir('restaurant') {
                    script {
-                       // Scan the image for vulnerabilities (vuln) and configurations (config)
+                       // Use Docker to run Trivy for scanning the image
                        sh """
-                       trivy image --scanners vuln,config --timeout 600s --no-progress ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
+                       docker run --rm \
+                       -v /var/run/docker.sock:/var/run/docker.sock \
+                       -v ${WORKSPACE}/trivy-cache:/root/.cache/ \
+                       aquasec/trivy:0.57.1 image \
+                       --scanners vuln,config \
+                       --timeout 600s \
+                       --no-progress \
+                       ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
                        """
                    }
                }
            }
        }
+
 
 
 
