@@ -9,16 +9,25 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-
                 git branch: 'main', url: 'https://github.com/hatemboudabra/Restaurant.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir('restaurant') { // Change directory to 'restaurant'
+                dir('restaurant') {
                     script {
                         sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
+                    }
+                }
+            }
+        }
+
+        stage('Trivy Image Scan') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        sh "trivy image ${DOCKER_HUB_REPO}:latest > trivy-report.txt"
                     }
                 }
             }
