@@ -51,9 +51,8 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        // Use docker-compose commands, depending on your version
-                        sh 'docker-compose down'
-                        sh 'docker-compose up -d'
+                        sh 'docker compose down'
+                        sh 'docker compose up -d'
                     }
                 }
             }
