@@ -27,12 +27,13 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        // Increase timeout to 10 minutes (600 seconds)
-                        sh "trivy image --scanners vuln --skip-dirs '/usr/share/maven' --timeout 600s ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'"
+                        // Scan the image for vulnerabilities without using Java DB
+                        sh "trivy image --scanners vuln --timeout 600s ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'"
                     }
                 }
             }
         }
+
 
 
         stage('Push Docker Image') {
