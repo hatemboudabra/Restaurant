@@ -27,11 +27,27 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        sh "docker run --rm ghcr.io/aquasecurity/trivy:latest image --no-progress ${DOCKER_HUB_REPO}:latest > trivy-report.txt"
+                        def maxRetries = 3
+                        def retryCount = 0
+                        def success = false
+                        while (!success && retryCount < maxRetries) {
+                            try {
+                                sh "docker run --rm aquasecurity/trivy:latest image --no-progress ${DOCKER_HUB_REPO}:latest > trivy-report.txt"
+                                success = true
+                            } catch (Exception e) {
+                                retryCount++
+                                if (retryCount >= maxRetries) {
+                                    error("Trivy scan failed after ${maxRetries} retries")
+                                }
+                                echo "Retrying in 30 seconds..."
+                                sleep(30)
+                            }
+                        }
                     }
                 }
             }
         }
+
 
         stage('Push Docker Image') {
             steps {
