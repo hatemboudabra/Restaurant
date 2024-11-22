@@ -27,34 +27,18 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        def maxRetries = 3
-                        def retryCount = 0
-                        def success = false
-                        while (!success && retryCount < maxRetries) {
-                            try {
-                                sh "docker run --rm aquasecurity/trivy:latest image --no-progress ${DOCKER_HUB_REPO}:latest > trivy-report.txt"
-                                success = true
-                            } catch (Exception e) {
-                                retryCount++
-                                if (retryCount >= maxRetries) {
-                                    error("Trivy scan failed after ${maxRetries} retries")
-                                }
-                                echo "Retrying in 30 seconds..."
-                                sleep(30)
-                            }
-                        }
+                        sh "trivy image ${DOCKER_HUB_REPO}:latest > trivy-report.txt"
                     }
                 }
             }
         }
-
 
         stage('Push Docker Image') {
             steps {
                 dir('restaurant') {
                     withCredentials([usernamePassword(credentialsId: 'dockerHubToken', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                         script {
-                            sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin"
+                            sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
                             sh "docker push ${DOCKER_HUB_REPO}:latest"
                         }
                     }
