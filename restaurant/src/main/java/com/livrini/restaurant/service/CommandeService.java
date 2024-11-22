@@ -5,11 +5,9 @@ import com.livrini.restaurant.entity.*;
 
 import com.livrini.restaurant.repository.CommandeRepository;
 import com.livrini.restaurant.repository.MenuRepo;
-import com.livrini.restaurant.repository.RestaurantRepo;
 import com.livrini.restaurant.repository.UserRepo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
@@ -84,6 +82,19 @@ public class CommandeService implements CommandeSer {
             throw new EntityNotFoundException("Commande with id " + id + " not found");
         }
     }
+    @Override
+    public Commande updateStatusById(Long id, Status status) {
+        Optional<Commande> optionalCommande = commandeRepository.findById(id);
+        if (optionalCommande.isPresent()) {
+            Commande commande = optionalCommande.get();
+            commande.setStatus(status);
+            commandeRepository.save(commande);
+            return commande;
+        } else {
+            throw new EntityNotFoundException("Commande with id " + id + " not found");
+        }
+    }
+
 
 
     @Override
