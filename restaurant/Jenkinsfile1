@@ -27,7 +27,7 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-                        sh "trivy image ${DOCKER_HUB_REPO}:latest > trivy-report.txt"
+                        sh "docker run --rm ghcr.io/aquasecurity/trivy:latest image --no-progress ${DOCKER_HUB_REPO}:latest > trivy-report.txt"
                     }
                 }
             }
@@ -38,7 +38,7 @@ pipeline {
                 dir('restaurant') {
                     withCredentials([usernamePassword(credentialsId: 'dockerHubToken', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                         script {
-                            sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
+                            sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin"
                             sh "docker push ${DOCKER_HUB_REPO}:latest"
                         }
                     }
