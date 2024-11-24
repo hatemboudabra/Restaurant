@@ -69,7 +69,6 @@ pipeline {
             }
         }
 
-
         stage('Run Dastardly Scan') {
             steps {
                 cleanWs()
@@ -77,7 +76,7 @@ pipeline {
                     script {
                         sh """
                         docker run --rm \
-                        --user $(id -u) \
+                        --user \$(id -u) \
                         -v ${WORKSPACE}:${WORKSPACE}:rw \
                         -e BURP_START_URL=http://${MINIKUBE_IP}:30084 \
                         -e BURP_REPORT_FILE_PATH=${WORKSPACE}/dastardly-report.xml \
