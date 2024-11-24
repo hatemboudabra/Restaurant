@@ -57,25 +57,22 @@ pipeline {
         }
 
         stage('Kubernetes Deploy') {
-            steps {
-                dir('restaurant/kub') {
-                    script {
-                        sh "kubectl config use-context minikube"
-
-                        sh """
-                            kubectl apply -f deployment.yaml -n default || echo 'Deployment failed, check logs.'
-                            kubectl apply -f service.yaml -n default || echo 'Service application failed, check logs.'
-                            kubectl apply -f secret.yaml -n default || echo 'Secret application failed, check logs.'
-                        """
-
-                        sh """
-                            kubectl get pods -n default || echo 'Failed to retrieve pods, check the logs.'
-                            kubectl get svc -n default || echo 'Failed to retrieve services, check the logs.'
-                        """
+                    steps {
+                        dir('restaurant/kub') {
+                            script {
+                                sh """
+                                    export KUBECONFIG=${KUBECONFIG}
+                                    kubectl config use-context minikube
+                                    kubectl apply -f deployment.yaml -n default
+                                    kubectl apply -f service.yaml -n default
+                                    kubectl apply -f secret.yaml -n default
+                                    kubectl get pods -n default
+                                    kubectl get svc -n default
+                                """
+                            }
+                        }
                     }
                 }
-            }
-        }
 
 
         stage('Run Dastardly Scan') {
