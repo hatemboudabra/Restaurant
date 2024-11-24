@@ -60,6 +60,7 @@ pipeline {
                     steps {
                         dir('restaurant/kub') {
                             script {
+                                // Ensure the correct kubeconfig path is used
                                 sh """
                                     export KUBECONFIG=${KUBECONFIG}
                                     kubectl config use-context minikube
@@ -72,7 +73,7 @@ pipeline {
                             }
                         }
                     }
-                }
+        }
 
 
         stage('Run Dastardly Scan') {
