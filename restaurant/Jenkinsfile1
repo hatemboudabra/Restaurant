@@ -15,10 +15,22 @@ pipeline {
             }
         }
 
+        stage('Build Application') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        // Build the Maven project
+                        sh "${MAVEN_HOME}/bin/mvn clean package -DskipTests"
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 dir('restaurant') {
                     script {
+                        // Build the Docker image
                         sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
                     }
                 }
@@ -29,6 +41,7 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
+                        // Use Trivy to scan the Docker image
                         sh """
                         docker run --rm \
                         -v /var/run/docker.sock:/var/run/docker.sock \
@@ -49,6 +62,7 @@ pipeline {
                 dir('restaurant') {
                     withCredentials([usernamePassword(credentialsId: 'dockerHubToken', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                         script {
+                            // Push the Docker image to Docker Hub
                             sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
                             sh "docker push ${DOCKER_HUB_REPO}:latest"
                         }
@@ -61,6 +75,7 @@ pipeline {
             steps {
                 dir('restaurant/kub') {
                     script {
+                        // Deploy the application to Kubernetes
                         sh 'kubectl apply -f . -n default'
                         sh 'kubectl get pods -n default'
                         sh 'kubectl get svc -n default'
@@ -71,9 +86,10 @@ pipeline {
 
         stage('Run Dastardly Scan') {
             steps {
-                cleanWs()
+                cleanWs()  // Clean workspace before running the scan
                 dir('restaurant') {
                     script {
+                        // Run the Dastardly security scan
                         sh """
                         docker run --rm \
                         --user \$(id -u) \
