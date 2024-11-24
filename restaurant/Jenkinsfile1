@@ -5,7 +5,7 @@ pipeline {
         MAVEN_HOME = '/usr/share/maven'
         DOCKER_HUB_REPO = 'hatemboudabra/restaurant_backend'
         MINIKUBE_IP = '192.168.58.2'
-        KUBECONFIG_PATH = '/home/jenkins/.kube/config'
+        KUBECONFIG = '/home/monpc/.kube/config'
     }
 
     stages {
