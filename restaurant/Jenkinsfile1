@@ -60,14 +60,23 @@ pipeline {
             steps {
                 dir('restaurant/kub') {
                     script {
-                        sh "kubectl apply -f . -n default"
+                        sh "kubectl config use-context minikube"
 
-                        sh "kubectl get pods -n default"
-                        sh "kubectl get svc -n default"
+                        sh """
+                            kubectl apply -f deployment.yaml -n default || echo 'Deployment failed, check logs.'
+                            kubectl apply -f service.yaml -n default || echo 'Service application failed, check logs.'
+                            kubectl apply -f secret.yaml -n default || echo 'Secret application failed, check logs.'
+                        """
+
+                        sh """
+                            kubectl get pods -n default || echo 'Failed to retrieve pods, check the logs.'
+                            kubectl get svc -n default || echo 'Failed to retrieve services, check the logs.'
+                        """
                     }
                 }
             }
         }
+
 
         stage('Run Dastardly Scan') {
             steps {
