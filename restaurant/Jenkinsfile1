@@ -15,49 +15,54 @@ pipeline {
             }
         }
 
+        stage('Build Application') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        // Build the Maven project
+                        sh "${MAVEN_HOME}/bin/mvn clean package -DskipTests"
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 dir('restaurant') {
                     script {
+                        // Build the Docker image
                         sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
                     }
                 }
             }
         }
 
-       stage('Trivy Image Scan') {
-           steps {
-               dir('restaurant') {
-                   script {
-                       // Use Docker to run Trivy for scanning the image
-                       sh """
-                       docker run --rm \
-                       -v /var/run/docker.sock:/var/run/docker.sock \
-                       -v ${WORKSPACE}/trivy-cache:/root/.cache/ \
-                       aquasec/trivy:0.57.1 image \
-                       --scanners vuln,config \
-                       --timeout 600s \
-                       --no-progress \
-                       ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
-                       """
-                   }
-               }
-           }
-       }
-
-
-
-
-
-
-
-
+        stage('Trivy Image Scan') {
+            steps {
+                dir('restaurant') {
+                    script {
+                        // Use Trivy to scan the Docker image
+                        sh """
+                        docker run --rm \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v ${WORKSPACE}/trivy-cache:/root/.cache/ \
+                        aquasec/trivy:0.57.1 image \
+                        --scanners vuln,config \
+                        --timeout 600s \
+                        --no-progress \
+                        ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
+                        """
+                    }
+                }
+            }
+        }
 
         stage('Push Docker Image') {
             steps {
                 dir('restaurant') {
                     withCredentials([usernamePassword(credentialsId: 'dockerHubToken', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                         script {
+                            // Push the Docker image to Docker Hub
                             sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
                             sh "docker push ${DOCKER_HUB_REPO}:latest"
                         }
@@ -67,36 +72,35 @@ pipeline {
         }
 
         stage('Kubernetes Deploy') {
-                    steps {
-                        dir('restaurant/kub') {
-                            script {
-
-                                sh 'kubectl apply -f . -n default'
-                                sh 'kubectl get pods -n default'
-                                sh 'kubectl get svc -n default'
-                            }
-                        }
+            steps {
+                dir('restaurant/kub') {
+                    script {
+                        // Deploy the application to Kubernetes
+                        sh 'kubectl apply -f . -n default'
+                        sh 'kubectl get pods -n default'
+                        sh 'kubectl get svc -n default'
                     }
                 }
+            }
+        }
 
-                stage('Run Dastardly Scan') {
-                    steps {
-                        cleanWs()  // Clean workspace before running the scan
-                        dir('restaurant') {
-                            script {
-                                // Run the Dastardly security scan (Burp Suite)
-                                sh """
-                                docker run --rm \
-                                --user \$(id -u) \
-                                -v ${WORKSPACE}:${WORKSPACE}:rw \
-                                -e BURP_START_URL=http://${MINIKUBE_IP}:30084 \
-                                -e BURP_REPORT_FILE_PATH=${WORKSPACE}/dastardly-report.xml \
-                                aquasec/dastardly:latest || echo 'Dastardly scan failed, check logs.'
-                                """
-                            }
-                        }
+        stage('Run Dastardly Scan') {
+            steps {
+                cleanWs()  // Clean workspace before running the scan
+                dir('restaurant') {
+                    script {
+                        // Run the Dastardly security scan
+                        sh """
+                        docker run --rm \
+                        --user \$(id -u) \
+                        -v ${WORKSPACE}:${WORKSPACE}:rw \
+                        -e DASTARDLY_TARGET_URL=http://${MINIKUBE_IP}:30084 \
+                        rattydave/dastardly || echo 'Dastardly scan failed, check logs.'
+                        """
                     }
                 }
+            }
+        }
     }
 
     post {
