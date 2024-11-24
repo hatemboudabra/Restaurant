@@ -5,6 +5,7 @@ pipeline {
         MAVEN_HOME = '/usr/share/maven'
         DOCKER_HUB_REPO = 'hatemboudabra/restaurant_backend'
         MINIKUBE_IP = '192.168.58.2'
+        KUBECONFIG_PATH = '/home/jenkins/.kube/config'
     }
 
     stages {
@@ -24,24 +25,33 @@ pipeline {
             }
         }
 
-        stage('Trivy Image Scan') {
-            steps {
-                dir('restaurant') {
-                    script {
-                        sh """
-                        docker run --rm \
-                        -v /var/run/docker.sock:/var/run/docker.sock \
-                        -v ${WORKSPACE}/trivy-cache:/root/.cache/ \
-                        aquasec/trivy:0.57.1 image \
-                        --scanners vuln,config \
-                        --timeout 600s \
-                        --no-progress \
-                        ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
-                        """
-                    }
-                }
-            }
-        }
+       stage('Trivy Image Scan') {
+           steps {
+               dir('restaurant') {
+                   script {
+                       // Use Docker to run Trivy for scanning the image
+                       sh """
+                       docker run --rm \
+                       -v /var/run/docker.sock:/var/run/docker.sock \
+                       -v ${WORKSPACE}/trivy-cache:/root/.cache/ \
+                       aquasec/trivy:0.57.1 image \
+                       --scanners vuln,config \
+                       --timeout 600s \
+                       --no-progress \
+                       ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
+                       """
+                   }
+               }
+           }
+       }
+
+
+
+
+
+
+
+
 
         stage('Push Docker Image') {
             steps {
@@ -57,35 +67,36 @@ pipeline {
         }
 
         stage('Kubernetes Deploy') {
-            steps {
-                dir('restaurant/kub') {
-                    script {
-                        sh "kubectl apply -f . -n default"
+                    steps {
+                        dir('restaurant/kub') {
+                            script {
 
-                        sh "kubectl get pods -n default"
-                        sh "kubectl get svc -n default"
+                                sh 'kubectl apply -f . -n default'
+                                sh 'kubectl get pods -n default'
+                                sh 'kubectl get svc -n default'
+                            }
+                        }
                     }
                 }
-            }
-        }
 
-        stage('Run Dastardly Scan') {
-            steps {
-                cleanWs()
-                dir('restaurant') {
-                    script {
-                        sh """
-                        docker run --rm \
-                        --user \$(id -u) \
-                        -v ${WORKSPACE}:${WORKSPACE}:rw \
-                        -e BURP_START_URL=http://${MINIKUBE_IP}:30084 \
-                        -e BURP_REPORT_FILE_PATH=${WORKSPACE}/dastardly-report.xml \
-                        aquasec/dastardly:latest || echo 'Dastardly scan failed, check logs.'
-                        """
+                stage('Run Dastardly Scan') {
+                    steps {
+                        cleanWs()  // Clean workspace before running the scan
+                        dir('restaurant') {
+                            script {
+                                // Run the Dastardly security scan (Burp Suite)
+                                sh """
+                                docker run --rm \
+                                --user \$(id -u) \
+                                -v ${WORKSPACE}:${WORKSPACE}:rw \
+                                -e BURP_START_URL=http://${MINIKUBE_IP}:30084 \
+                                -e BURP_REPORT_FILE_PATH=${WORKSPACE}/dastardly-report.xml \
+                                aquasec/dastardly:latest || echo 'Dastardly scan failed, check logs.'
+                                """
+                            }
+                        }
                     }
                 }
-            }
-        }
     }
 
     post {
@@ -94,7 +105,6 @@ pipeline {
         }
         success {
             echo 'Pipeline executed successfully!'
-            archiveArtifacts artifacts: '**/dastardly-report.xml, **/trivy-report.txt', allowEmptyArchive: true
         }
         failure {
             echo 'Pipeline failed. Please check the logs for details.'
