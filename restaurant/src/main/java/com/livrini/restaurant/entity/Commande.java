@@ -25,7 +25,7 @@ public class Commande {
     @OneToMany(mappedBy = "commande")
     private List<Payment> payments;
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
     @OneToMany(mappedBy = "commande")
@@ -37,6 +37,9 @@ public class Commande {
     @JoinColumn(name = "menu_id", nullable = false)
     @JsonIgnore
     private Menu menu;
+    @ManyToOne
+    @JoinColumn(name = "livreur_id")
+    private User livreur;
     public Long getMenuId() {
         return menu != null ? menu.getId() : null;
     }
@@ -46,10 +49,17 @@ public class Commande {
     public String getMenuName() {
         return menu != null ? menu.getName() : null;
     }
+    public String getadresse() {
+        return user != null ? user.getAdresse() : null;
+    }
+    public String getLivreurName() {
+        return livreur != null ? livreur.getUsername() : null;
+    }
     public String getUserName() {
         return user != null ? user.getUsername() : null;
     }
     public float getMenuPrice() {
         return menu != null ? menu.getPrice() : null;
     }
+
 }

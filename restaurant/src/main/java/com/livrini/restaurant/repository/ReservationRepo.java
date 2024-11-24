@@ -12,4 +12,5 @@ public interface ReservationRepo extends JpaRepository<Reservation, Long> {
     List<Reservation> findByUserId(Long userId); // Trouver les réservations par ID utilisateur
     List<Reservation> findByRestaurantId(Long restaurantId);
     List<Reservation> findByStatus(ReservationStatus status);// Trouver les réservations par ID restaurant
+
 }

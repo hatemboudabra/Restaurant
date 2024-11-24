@@ -12,5 +12,8 @@ public interface UserService {
     User findUserByUsername (String username);
     Role addRole(Role role);
     User registerUser(RegistationRequest request);
+
+    List<User> getAllLivreurs();
+
     User addRoleToUser(String username, String rolename);
 }

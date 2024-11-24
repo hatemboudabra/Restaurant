@@ -80,7 +80,6 @@ public class ReservationController {
     public ResponseEntity<Reservation> updateReservationStatus(
             @PathVariable Long id,
             @RequestParam String status) {
-
         try {
             Reservation updatedReservation = reservationService.updateReservationStatus(id, status);
             return ResponseEntity.ok(updatedReservation);

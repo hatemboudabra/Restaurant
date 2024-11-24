@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface CommandeRepository extends JpaRepository<Commande, Long> {
     List<Commande> findByUser_Id(Long userId);
-
+    List<Commande> findByLivreurId(Long livreurId);
     @Query("UPDATE Commande c SET c.status = :status WHERE c.id = :id")
     void updateStatusById(@Param("id") Long id, @Param("status") Status status);
 
