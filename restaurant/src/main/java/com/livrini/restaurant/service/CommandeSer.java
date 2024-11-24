@@ -14,8 +14,9 @@ public interface CommandeSer {
     public Optional<Commande> getcommande(Long id);
     List<Commande> getCommandeByUser(Long userId);
    public Commande updatecommande(Long id , CommandeDTO commandeDTO);
+    public List<Commande> getByLivreurId(Long livreurId) ;
 
-
+    Commande assignLivreurToCommande(Long commandeId, Integer livreurId);
 
     Commande updateStatusById(Long id, Status status);
 

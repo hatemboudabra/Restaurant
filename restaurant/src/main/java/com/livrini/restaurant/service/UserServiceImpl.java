@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
+        user.setAdresse(request.getAdresse());
         user.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
         user.setEnabled(false);
         userRepo.save(user);
@@ -66,7 +67,10 @@ public class UserServiceImpl implements UserService {
 
         return userRepo.save(user);
     }
-
+    @Override
+    public List<User> getAllLivreurs() {
+        return userRepo.findUsersByRole("LIVREUR");
+    }
     @Override
     public User addRoleToUser(String username, String rolename) {
         User user = userRepo.findByUsername(username);

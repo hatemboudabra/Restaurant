@@ -22,6 +22,7 @@ public class User implements Serializable {
     private String username;
     private String password;
     private String email;
+    private String adresse;
     private Boolean enabled;
     @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name="user_role",joinColumns = @JoinColumn(name="user_id") ,

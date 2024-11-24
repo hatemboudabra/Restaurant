@@ -24,8 +24,13 @@ public class CommandeController {
     }
     @PostMapping("/addCommande")
     public ResponseEntity<CommandeDTO> addCommande(@RequestBody CommandeDTO commandeDTO) {
+
         CommandeDTO savedCommande = commandeService.addCommande(commandeDTO);
         return new ResponseEntity<>(savedCommande, HttpStatus.CREATED);
+    }
+    @GetMapping("/livreur/{livreurId}")
+    public List<Commande> getCommandesByLivreurId(@PathVariable Long livreurId) {
+        return commandeService.getByLivreurId(livreurId);
     }
     @PatchMapping("/updateStatus/{id}")
     public ResponseEntity<Commande> updateStatusById(@PathVariable Long id, @RequestParam Status status) {
@@ -36,6 +41,24 @@ public class CommandeController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    @PatchMapping("/assignLivreur/{commandeId}")
+    public ResponseEntity<Commande> assignLivreurToCommande(
+            @PathVariable Long commandeId,
+            @RequestParam Integer livreurId) {
+        System.out.println("assignLivreurToCommande called with commandeId: " + commandeId + " and livreurId: " + livreurId);
+        // logique ici
+        try {
+            Commande updatedCommande = commandeService.assignLivreurToCommande(commandeId, livreurId);
+            return new ResponseEntity<>(updatedCommande, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            System.out.println(e);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Commande>> getCommandeByUser(@PathVariable Long userId) {

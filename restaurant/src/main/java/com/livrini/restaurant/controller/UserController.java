@@ -7,6 +7,7 @@ import com.livrini.restaurant.service.registre.RegistationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -30,6 +31,11 @@ public class UserController {
     public User register(@RequestBody RegistationRequest request){
         return userService.registerUser(request);
 
+    }
+    @GetMapping("/livreurs")
+    public ResponseEntity<List<User>> getAllLivreurs() {
+        List<User> livreurs = userService.getAllLivreurs();
+        return ResponseEntity.ok(livreurs);
     }
     @GetMapping("/{username}")
     public Map<String, Object> getUserIdByUsername(@PathVariable String username) {
