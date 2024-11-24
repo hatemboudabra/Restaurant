@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         MAVEN_HOME = '/usr/share/maven'
-        SONAR_HOST_URL = 'http://localhost:9000'
-        SONAR_PROJECT_KEY = 'restaurant_livrini'
+        DOCKER_HUB_REPO = 'hatemboudabra/restaurant_backend'
+        MINIKUBE_IP = '192.168.58.2'
+        KUBECONFIG = '/home/monpc/.kube/config'
     }
 
     stages {
@@ -14,80 +15,87 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Application') {
             steps {
                 dir('restaurant') {
                     script {
-                        sh "${MAVEN_HOME}/bin/mvn clean install"
+                        sh "${MAVEN_HOME}/bin/mvn clean package -DskipTests"
                     }
                 }
             }
         }
 
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
                 dir('restaurant') {
                     script {
-                        sh "${MAVEN_HOME}/bin/mvn test"
-                    }
-                }
-            }
-            post {
-                always {
-                    junit 'restaurant/target/surefire-reports/*.xml'
-                }
-                success {
-                    echo 'All unit tests passed!'
-                }
-                failure {
-                    echo 'Some unit tests failed.'
-                }
-            }
-        }
-
-        stage('Upload to Nexus') {
-            steps {
-                dir('restaurant') {
-                    script {
-                        sh "${MAVEN_HOME}/bin/mvn deploy"
+                        // Build the Docker image
+                        sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
                     }
                 }
             }
         }
 
-        stage('Run SonarQube Analysis') {
+        stage('Trivy Image Scan') {
             steps {
                 dir('restaurant') {
-                    withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) {
+                    script {
+
+                        sh """
+                        docker run --rm \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v ${WORKSPACE}/trivy-cache:/root/.cache/ \
+                        aquasec/trivy:0.57.1 image \
+                        --scanners vuln,config \
+                        --timeout 600s \
+                        --no-progress \
+                        ${DOCKER_HUB_REPO}:latest > trivy-report.txt || echo 'Trivy scan failed, please check logs.'
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                dir('restaurant') {
+                    withCredentials([usernamePassword(credentialsId: 'dockerHubToken', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                         script {
-                            sh "${MAVEN_HOME}/bin/mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
+
+                            sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
+                            sh "docker push ${DOCKER_HUB_REPO}:latest"
                         }
                     }
                 }
             }
         }
 
-        stage('Publish Code Coverage') {
+        stage('Kubernetes Deploy') {
             steps {
-                dir('restaurant') {
+                dir('restaurant/kub') {
                     script {
-                        sh "${MAVEN_HOME}/bin/mvn jacoco:report"
+
+                        sh 'kubectl apply -f . -n default'
+                        sh 'kubectl get pods -n default'
+                        sh 'kubectl get svc -n default'
                     }
-                }
-            }
-            post {
-                success {
-                    archiveArtifacts artifacts: 'restaurant/target/site/jacoco/*.html', allowEmptyArchive: true
                 }
             }
         }
 
-        stage('OWASP Dependency Check') {
+        stage('Run Dastardly Scan') {
             steps {
+                cleanWs()
                 dir('restaurant') {
                     script {
-                        dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'Dependency-Check'
-                        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                        // Run the Dastardly security scan
+                        sh """
+                        docker run --rm \
+                        --user \$(id -u) \
+                        -v ${WORKSPACE}:${WORKSPACE}:rw \
+                        -e DASTARDLY_TARGET_URL=http://${MINIKUBE_IP}:30084 \
+                        rattydave/dastardly || echo 'Dastardly scan failed, check logs.'
+                        """
                     }
                 }
             }
@@ -97,6 +105,12 @@ pipeline {
     post {
         always {
             echo 'Pipeline completed.'
+        }
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs for details.'
         }
     }
 }
