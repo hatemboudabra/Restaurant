@@ -96,7 +96,7 @@ pipeline {
                     sh """
                         docker run --rm --user \$(id -u) \
                             -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
-                            -e DASTARDLY_TARGET_URL=http://192.168.58.2:30084/v2/api-docs \
+                            -e DASTARDLY_TARGET_URL=http://192.168.58.2:30084/v3/api-docs \
                             -v ${DASTARDLY_REPORT_DIR}:/dastardly \
                             rattydave/dastardly
                     """
