@@ -7,6 +7,7 @@ pipeline {
         MINIKUBE_IP = '192.168.58.2'
         KUBECONFIG = '/home/monpc/.kube/config'
         DASTARDLY_REPORT_DIR = "/var/lib/jenkins/dastardly_output"
+        TERRAFORM_WORKSPACE = '/home/monpc/Bureau/Restaurant/restaurant' // Adjust as needed
     }
 
     stages {
@@ -20,7 +21,6 @@ pipeline {
             steps {
                 dir('restaurant') {
                     script {
-
                         sh "${MAVEN_HOME}/bin/mvn clean package -DskipTests"
                     }
                 }
@@ -76,7 +76,6 @@ pipeline {
             steps {
                 dir('restaurant/kub') {
                     script {
-
                         sh 'kubectl apply -f . -n default'
                         sh 'kubectl get pods -n default'
                         sh 'kubectl get svc -n default'
@@ -85,14 +84,26 @@ pipeline {
             }
         }
 
+        stage('Terraform Apply') {
+            steps {
+                script {
+                    sh "terraform init "
+
+                    // Plan Terraform changes (optional, but good practice)
+                    sh "terraform plan -var-file='${TERRAFORM_WORKSPACE}/.tfvars'"
+
+                    // Apply Terraform configuration
+                    sh "terraform apply -auto-approve -var-file='${TERRAFORM_WORKSPACE}/.tfvars'"
+                }
+            }
+        }
+
         stage('Dastardly Scan') {
             steps {
                 script {
-
                     sh "mkdir -p ${DASTARDLY_REPORT_DIR}"
                     sh "chmod -R 777 ${DASTARDLY_REPORT_DIR}"
 
-                    // Run Dastardly with the correct output directory
                     sh """
                         docker run --rm --user \$(id -u) \
                             -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
