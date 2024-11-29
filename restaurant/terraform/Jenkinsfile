@@ -8,13 +8,13 @@ pipeline {
     stages {
         stage('Checkout Terraform Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/hatemboudabra/Restaurant.git
+                git branch: 'main', url: 'https://github.com/hatemboudabra/Restaurant.git'
             }
         }
 
         stage('Terraform Init') {
             steps {
-                dir(TERRAFORM_WORKSPACE) { // Assurez-vous que ce chemin est correct
+                dir(TERRAFORM_WORKSPACE) {
                     sh 'terraform init'
                 }
             }
@@ -23,7 +23,6 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 dir(TERRAFORM_WORKSPACE) {
-                    // Vérifiez que le fichier `terraform.tfvars` existe et est bien configuré
                     sh 'terraform plan -var-file=terraform.tfvars'
                 }
             }
@@ -32,7 +31,6 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 dir(TERRAFORM_WORKSPACE) {
-                    // Appliquez les changements Terraform
                     sh 'terraform apply -auto-approve -var-file=terraform.tfvars'
                 }
             }
