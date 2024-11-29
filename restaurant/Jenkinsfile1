@@ -7,7 +7,7 @@ pipeline {
         MINIKUBE_IP = '192.168.58.2'
         KUBECONFIG = '/home/monpc/.kube/config'
         DASTARDLY_REPORT_DIR = "/var/lib/jenkins/dastardly_output"
-        TERRAFORM_WORKSPACE = '/home/monpc/Bureau/Restaurant/restaurant' // Adjust as needed
+
     }
 
     stages {
@@ -84,19 +84,6 @@ pipeline {
             }
         }
 
-        stage('Terraform Apply') {
-            steps {
-                script {
-                    sh "terraform init "
-
-                    // Plan Terraform changes (optional, but good practice)
-                    sh "terraform plan -var-file='${TERRAFORM_WORKSPACE}/.tfvars'"
-
-                    // Apply Terraform configuration
-                    sh "terraform apply -auto-approve -var-file='${TERRAFORM_WORKSPACE}/.tfvars'"
-                }
-            }
-        }
 
         stage('Dastardly Scan') {
             steps {
