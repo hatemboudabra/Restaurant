@@ -110,13 +110,7 @@ pipeline {
                 }
             }
         }
-              } else {
-                            echo "Rapport du scan Dastardly généré avec succès."
-                        }
-                    }
-                }
-            }
-        }
+
 
 
 
