@@ -92,13 +92,13 @@ pipeline {
                     sh "mkdir -p ${DASTARDLY_REPORT_DIR}"
                     sh "chmod -R 777 ${DASTARDLY_REPORT_DIR}"
 
-                    // Run Dastardly scan in Docker
+                    // Run Dastardly scan in Docker and curl the target directly from the container
                     sh """
-                        docker run --rm --user \$(id -u) \
-                            -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
-                            -e DASTARDLY_TARGET_URL=http://192.168.58.2:30084/v3/api-docs \
-                            -v ${DASTARDLY_REPORT_DIR}:/dastardly \
-                            rattydave/dastardly
+                        docker run --rm --user $(id -u) \
+                        -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
+                        -e DASTARDLY_TARGET_URL=http://192.168.58.2:30084/v3/api-docs \
+                        -v ${DASTARDLY_REPORT_DIR}:/dastardly \
+                        rattydave/dastardly bash -c 'curl ${DASTARDLY_TARGET_URL}'
                     """
 
                     // Verify if the report was generated
@@ -114,6 +114,8 @@ pipeline {
                 }
             }
         }
+
+
 
 
 
