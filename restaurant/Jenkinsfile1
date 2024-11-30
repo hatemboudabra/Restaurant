@@ -88,26 +88,29 @@ pipeline {
         stage('Dastardly Scan') {
             steps {
                 script {
-                    // Assurez-vous que le répertoire du rapport existe et dispose des bonnes permissions
                     sh "mkdir -p ${DASTARDLY_REPORT_DIR}"
                     sh "chmod -R 777 ${DASTARDLY_REPORT_DIR}"
 
-                    // Exécuter le scan Dastardly dans Docker et curl l'URL cible directement depuis le conteneur
+                    def dastardlyTargetUrl = "http://192.168.58.2:30084/v3/api-docs"
+
                     sh """
                         docker run --rm --user \$(id -u) \
                         -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
-                        -e DASTARDLY_TARGET_URL=http://192.168.58.2:30084/v3/api-docs \
+                        -e DASTARDLY_TARGET_URL=${dastardlyTargetUrl} \
                         -v ${DASTARDLY_REPORT_DIR}:/dastardly \
-                        rattydave/dastardly bash -c 'curl ${DASTARDLY_TARGET_URL}'
+                        rattydave/dastardly bash -c 'curl ${dastardlyTargetUrl}'
                     """
 
-                    // Vérifiez si le rapport a été généré
-                    script {
-                        // Vérifiez si le répertoire de rapport contient des fichiers
-                        def reportExists = sh(script: "ls -1 ${DASTARDLY_REPORT_DIR} | wc -l", returnStdout: true).trim()
-                        if (reportExists.toInteger() == 0) {
-                            error "Aucun rapport généré par le scan Dastardly"
-                        } else {
+                    def reportExists = sh(script: "ls -1 ${DASTARDLY_REPORT_DIR} | wc -l", returnStdout: true).trim()
+                    if (reportExists.toInteger() == 0) {
+                        error "Aucun rapport généré par le scan Dastardly"
+                    } else {
+                        echo "Rapport du scan Dastardly généré avec succès."
+                    }
+                }
+            }
+        }
+              } else {
                             echo "Rapport du scan Dastardly généré avec succès."
                         }
                     }
