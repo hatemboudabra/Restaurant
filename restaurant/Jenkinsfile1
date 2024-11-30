@@ -98,8 +98,9 @@ pipeline {
                         -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
                         -e DASTARDLY_TARGET_URL=${dastardlyTargetUrl} \
                         -v ${DASTARDLY_REPORT_DIR}:/dastardly \
-                        rattydave/dastardly bash -c 'curl ${dastardlyTargetUrl}'
+                        rattydave/dastardly bash -c 'apt-get update && apt-get install -y curl && curl ${dastardlyTargetUrl}'
                     """
+
 
                     def reportExists = sh(script: "ls -1 ${DASTARDLY_REPORT_DIR} | wc -l", returnStdout: true).trim()
                     if (reportExists.toInteger() == 0) {
