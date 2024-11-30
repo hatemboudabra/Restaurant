@@ -88,9 +88,11 @@ pipeline {
         stage('Dastardly Scan') {
             steps {
                 script {
+                    // Ensure the report directory exists and has the correct permissions
                     sh "mkdir -p ${DASTARDLY_REPORT_DIR}"
                     sh "chmod -R 777 ${DASTARDLY_REPORT_DIR}"
 
+                    // Run Dastardly scan in Docker
                     sh """
                         docker run --rm --user \$(id -u) \
                             -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
@@ -104,6 +106,7 @@ pipeline {
                 }
             }
         }
+
 
     }
 
