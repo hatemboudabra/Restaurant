@@ -94,12 +94,14 @@ pipeline {
                     def dastardlyTargetUrl = "http://192.168.58.2:30084/v3/api-docs"
 
                     sh """
+                        docker build -t dastardly-with-curl -f Dockerfile .
                         docker run --rm --user \$(id -u) \
                         -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
                         -e DASTARDLY_TARGET_URL=${dastardlyTargetUrl} \
-                        -v ${DASTARDLY_REPORT_DIR}:/dastardly \
-                        rattydave/dastardly bash -c 'apt-get update && apt-get install -y curl && curl ${dastardlyTargetUrl}'
+                        -v /var/lib/jenkins/dastardly_output:/dastardly \
+                        dastardly-with-curl bash -c 'curl ${dastardlyTargetUrl}'
                     """
+
 
 
                     def reportExists = sh(script: "ls -1 ${DASTARDLY_REPORT_DIR} | wc -l", returnStdout: true).trim()
