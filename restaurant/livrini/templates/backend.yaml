@@ -33,7 +33,6 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
 
-
 ---
 apiVersion: v1
 kind: Service
@@ -49,4 +48,3 @@ spec:
       nodePort: {{ .Values.backend.service.nodePort }}
   selector:
     app: {{ .Values.backend.name }}
-
