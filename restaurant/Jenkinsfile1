@@ -98,11 +98,8 @@ pipeline {
                         -v /var/lib/jenkins/workspace/resarurant_livrini:/var/lib/jenkins/workspace/resarurant_livrini:rw \
                         -e DASTARDLY_TARGET_URL=${dastardlyTargetUrl} \
                         -v /var/lib/jenkins/dastardly_output:/dastardly \
-                        rattydave/dastardly bash -c 'apt-get update && apt-get install -y wget && wget -qO- ${dastardlyTargetUrl}'
+                        rattydave/dastardly bash -c 'mkdir -p /var/lib/apt/lists/partial && apt-get update && apt-get install -y wget && wget -qO- ${dastardlyTargetUrl}'
                     """
-
-
-
 
                     def reportExists = sh(script: "ls -1 ${DASTARDLY_REPORT_DIR} | wc -l", returnStdout: true).trim()
                     if (reportExists.toInteger() == 0) {
@@ -113,6 +110,7 @@ pipeline {
                 }
             }
         }
+
 
 
 
