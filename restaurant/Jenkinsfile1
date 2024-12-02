@@ -20,7 +20,7 @@ pipeline {
         stage('Build Application') {
             steps {
                 dir('restaurant') {
-                    script {
+                    script {git
                         sh "${MAVEN_HOME}/bin/mvn clean package -DskipTests"
                     }
                 }
@@ -109,6 +109,7 @@ pipeline {
                     }
                 }
             }
+
         }
 
 

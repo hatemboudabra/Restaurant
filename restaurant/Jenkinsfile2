@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    environment {
+        K8S_TOKEN = credentials('k8s-token')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/hatemboudabra/Restaurant.git'
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                dir('restaurant') {
+                    sh '''
+                    terraform init
+                    terraform plan -var="k8s_token=$K8S_TOKEN"
+                    '''
+                }
+            }
+        }
+        stage('Terraform Apply') {
+            steps {
+                dir('restaurant') {
+                    sh '''
+                    terraform apply -var="k8s_token=$K8S_TOKEN" -auto-approve
+                    '''
+                }
+            }
+        }
+    }
+}
