@@ -20,7 +20,7 @@ pipeline {
         stage('Build Application') {
             steps {
                 dir('restaurant') {
-                    script {git
+                    script {
                         sh "${MAVEN_HOME}/bin/mvn clean package -DskipTests"
                     }
                 }
